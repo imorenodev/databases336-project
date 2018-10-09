@@ -3,13 +3,16 @@ package org.moreno.wolak.project.resources;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.moreno.wolak.project.dtos.BarDto;
 import org.moreno.wolak.project.dtos.DrinkerDto;
 import org.moreno.wolak.project.repository.drinkers.DrinkersRepository;
 
@@ -40,6 +43,18 @@ public class DrinkersResource {
 		return getDrinkersRepository().getDrinkerById(drinkerId);
 	}
 	
+	@DELETE
+	@Path("/{drinkerId}")
+	public int deleteDrinkerById(@PathParam("drinkerId") int drinkerId) {
+		return getDrinkersRepository().deleteDrinkerById(drinkerId);
+	}
+	
+	@PUT
+	@Path("/{drinkerId}")
+	public DrinkerDto updateDrinkerById(@PathParam("drinkerId") int drinkerId, DrinkerDto drinker) {
+		return getDrinkersRepository().updateDrinkerById(drinkerId, drinker);
+	}
+
 	@POST
 	@Path("/")
 	public DrinkerDto createDrinker(DrinkerDto drinker) {

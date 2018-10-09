@@ -106,5 +106,43 @@ public class FoodsRepository implements IFoodsDao {
 		return food;
 	}
 
+	@Override
+	public int deleteFoodById(int foodId) {
+		String deleteString = "DELETE FROM items WHERE item_id=?";
+		
+		try (Connection connection = ConnectionFactory.getConnection(); 
+			 PreparedStatement deleteStatement = connection.prepareStatement(deleteString)) {
+			
+			deleteStatement.setInt(1, foodId);
+			deleteStatement.executeUpdate();
+			
+		} catch (SQLException e) {
+			System.out.println("FAILED: deleteFoodById");
+			e.printStackTrace();
+		} 
+
+		return foodId;
+	}
+	
+	@Override
+	public FoodDto updateFoodById(int foodId, FoodDto food) {
+		String updateString = "UPDATE items SET name=?, manufacturer=?, calories=? WHERE item_id=?";
+
+		try (Connection connection = ConnectionFactory.getConnection();
+			 PreparedStatement updateStatement = connection.prepareStatement(updateString)) {
+
+			updateStatement.setString(1, food.getName());
+			updateStatement.setString(2, food.getManufacturer());
+			updateStatement.setInt(3, food.getCalories());
+			updateStatement.setInt(4, foodId);
+
+			updateStatement.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println("FAILED: updateFoodById");
+			e.printStackTrace();
+		} 
+		
+		return food;
+	}
 
 }

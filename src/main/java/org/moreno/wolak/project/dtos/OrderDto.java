@@ -3,7 +3,7 @@ package org.moreno.wolak.project.dtos;
 import javax.json.bind.annotation.JsonbPropertyOrder;
 
 @JsonbPropertyOrder({
-	"orderNumber", "billId", "drinkerId", "itemId", "orderDate"
+	"orderNumber", "billId", "drinkerId", "itemId", "quantity", "orderDate"
 })
 public class OrderDto {
 
@@ -11,9 +11,16 @@ public class OrderDto {
 	private int billId;
 	private int drinkerId;
 	private int itemId;
+	private int quantity;
 	private String orderDate;
 	
 	
+	public int getQuantity() {
+		return quantity;
+	}
+	public void setQuantity(int quantity) {
+		this.quantity = quantity;
+	}
 	public int getOrderNumber() {
 		return orderNumber;
 	}

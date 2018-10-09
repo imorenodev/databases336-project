@@ -3,8 +3,10 @@ package org.moreno.wolak.project.resources;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -40,6 +42,18 @@ public class FoodsResource {
 	@Path("/{foodId}")
 	public FoodDto getFoods(@PathParam("foodId") int foodId) {
 		return getFoodsRepository().getFoodById(foodId);
+	}
+	
+	@DELETE
+	@Path("/{foodId}")
+	public int deleteFoodById(@PathParam("foodId") int foodId) {
+		return getFoodsRepository().deleteFoodById(foodId);
+	}
+	
+	@PUT
+	@Path("/{foodId}")
+	public FoodDto updateFoodById(@PathParam("foodId") int foodId, FoodDto food) {
+		return getFoodsRepository().updateFoodById(foodId, food);
 	}
 	
 	@POST

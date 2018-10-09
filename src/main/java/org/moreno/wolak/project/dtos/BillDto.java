@@ -3,12 +3,11 @@ package org.moreno.wolak.project.dtos;
 import javax.json.bind.annotation.JsonbPropertyOrder;
 
 @JsonbPropertyOrder({
-	"billId", "barId", "date", "tip", "tax", "total"
+	"billId", "date", "tip", "tax", "total"
 })
 public class BillDto {
 
 	private int billId;
-	private int barId;
 	private String date;
 	private double tip;
 	private double tax;
@@ -20,12 +19,6 @@ public class BillDto {
 	}
 	public void setBillId(int billId) {
 		this.billId = billId;
-	}
-	public int getBarId() {
-		return barId;
-	}
-	public void setBarId(int barId) {
-		this.barId = barId;
 	}
 	public String getDate() {
 		return date;

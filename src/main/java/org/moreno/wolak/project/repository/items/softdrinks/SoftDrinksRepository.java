@@ -105,5 +105,44 @@ public class SoftDrinksRepository implements ISoftDrinksDao {
 		
 		return softDrink;
 	}
+	
+	@Override
+	public int deleteSoftDrinkById(int softDrinkId) {
+		String deleteString = "DELETE FROM items WHERE item_id=?";
+		
+		try (Connection connection = ConnectionFactory.getConnection(); 
+			 PreparedStatement deleteStatement = connection.prepareStatement(deleteString)) {
+			
+			deleteStatement.setInt(1, softDrinkId);
+			deleteStatement.executeUpdate();
+			
+		} catch (SQLException e) {
+			System.out.println("FAILED: deleteSoftDrinkById");
+			e.printStackTrace();
+		} 
+
+		return softDrinkId;
+	}
+	
+	@Override
+	public SoftDrinkDto updateSoftDrinkById(int softDrinkId, SoftDrinkDto softDrink) {
+		String updateString = "UPDATE items SET name=?, manufacturer=?, calories=? WHERE item_id=?";
+
+		try (Connection connection = ConnectionFactory.getConnection();
+			 PreparedStatement updateStatement = connection.prepareStatement(updateString)) {
+
+			updateStatement.setString(1, softDrink.getName());
+			updateStatement.setString(2, softDrink.getManufacturer());
+			updateStatement.setInt(3, softDrink.getCalories());
+			updateStatement.setInt(4, softDrinkId);
+
+			updateStatement.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println("FAILED: updateSoftDrinkById");
+			e.printStackTrace();
+		} 
+		
+		return softDrink;
+	}
 
 }

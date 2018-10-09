@@ -108,13 +108,13 @@ public class BarsRepository implements IBarsDao {
 	}
 
 	public int deleteBarById(int barId) {
-		String updateString = "DELETE FROM bars WHERE bar_id=?";
+		String deleteString = "DELETE FROM bars WHERE bar_id=?";
 		
 		try (Connection connection = ConnectionFactory.getConnection(); 
-			 PreparedStatement updateStatement = connection.prepareStatement(updateString)) {
+			 PreparedStatement deleteStatement = connection.prepareStatement(deleteString)) {
 			
-			updateStatement.setInt(1, barId);
-			updateStatement.executeUpdate();
+			deleteStatement.setInt(1, barId);
+			deleteStatement.executeUpdate();
 			
 		} catch (SQLException e) {
 			System.out.println("FAILED: deleteBarById");

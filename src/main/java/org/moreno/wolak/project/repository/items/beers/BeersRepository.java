@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.moreno.wolak.project.dtos.BarDto;
 import org.moreno.wolak.project.dtos.BeerDto;
 import org.moreno.wolak.project.dtos.ItemDto;
 import org.moreno.wolak.project.dtos.BeerDto;
@@ -106,5 +107,43 @@ public class BeersRepository implements IBeersDao {
 		return beer;
 	}
 
+	@Override
+	public int deleteBeerById(int beerId) {
+		String deleteString = "DELETE FROM items WHERE item_id=?";
+		
+		try (Connection connection = ConnectionFactory.getConnection(); 
+			 PreparedStatement deleteStatement = connection.prepareStatement(deleteString)) {
+			
+			deleteStatement.setInt(1, beerId);
+			deleteStatement.executeUpdate();
+			
+		} catch (SQLException e) {
+			System.out.println("FAILED: deleteBeerById");
+			e.printStackTrace();
+		} 
+
+		return beerId;
+	}
+	
+	@Override
+	public BeerDto updateBeerById(int beerId, BeerDto beer) {
+		String updateString = "UPDATE items SET name=?, manufacturer=?, calories=? WHERE item_id=?";
+
+		try (Connection connection = ConnectionFactory.getConnection();
+			 PreparedStatement updateStatement = connection.prepareStatement(updateString)) {
+
+			updateStatement.setString(1, beer.getName());
+			updateStatement.setString(2, beer.getManufacturer());
+			updateStatement.setInt(3, beer.getCalories());
+			updateStatement.setInt(4, beerId);
+
+			updateStatement.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println("FAILED: updateBeerById");
+			e.printStackTrace();
+		} 
+		
+		return beer;
+	}
 
 }

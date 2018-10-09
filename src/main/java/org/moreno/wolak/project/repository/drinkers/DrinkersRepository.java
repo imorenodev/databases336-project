@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.moreno.wolak.project.dtos.BarDto;
 import org.moreno.wolak.project.dtos.DrinkerDto;
 import org.moreno.wolak.project.repository.ConnectionFactory;
 
@@ -98,6 +99,45 @@ public class DrinkersRepository implements IDrinkerDao {
 			insertStatement.executeUpdate();
 		} catch (SQLException e) {
 			System.out.println("FAILED: createDrinker");
+			e.printStackTrace();
+		} 
+		
+		return drinker;
+	}
+	
+	public int deleteDrinkerById(int drinkerId) {
+		String deleteString = "DELETE FROM drinkers WHERE drinker_id=?";
+		
+		try (Connection connection = ConnectionFactory.getConnection(); 
+			 PreparedStatement deleteStatement = connection.prepareStatement(deleteString)) {
+			
+			deleteStatement.setInt(1, drinkerId);
+			deleteStatement.executeUpdate();
+			
+		} catch (SQLException e) {
+			System.out.println("FAILED: deleteDrinkerById");
+			e.printStackTrace();
+		} 
+
+		return drinkerId;
+	}
+	
+	public DrinkerDto updateDrinkerById(int drinkerId, DrinkerDto drinker) {
+		String updateString = "UPDATE drinkers SET name=?, phone=?, city=?, address=?, state=? WHERE drinker_id=?";
+
+		try (Connection connection = ConnectionFactory.getConnection();
+			 PreparedStatement updateStatement = connection.prepareStatement(updateString)) {
+
+			updateStatement.setString(1, drinker.getName());
+			updateStatement.setString(2, drinker.getPhone());
+			updateStatement.setString(3, drinker.getCity());
+			updateStatement.setString(4, drinker.getAddress());
+			updateStatement.setString(5, drinker.getState());
+			updateStatement.setInt(6, drinkerId);
+
+			updateStatement.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println("FAILED: updateDrinkerById");
 			e.printStackTrace();
 		} 
 		
