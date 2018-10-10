@@ -12,7 +12,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.moreno.wolak.project.dtos.SellDto;
+import org.moreno.wolak.project.dtos.SellsResponseDto;
+import org.moreno.wolak.project.repository.sells.SellsRepository;
 
 
 @Produces(MediaType.APPLICATION_JSON)
@@ -30,34 +31,34 @@ public class SellsResource {
 		return this._repository;
 	}
 
-
-	@GET
-	@Path("/")
-	public List<SellDto> getSells() {
-		return getSellsRepository().getAllSells();
-	}
-	
-	@GET
-	@Path("/{sellId}")
-	public SellDto getSells(@PathParam("sellId") int sellId) {
-		return getSellsRepository().getSellById(sellId);
-	}
-	
-	@DELETE
-	@Path("/{sellId}")
-	public int deleteSellById(@PathParam("sellId") int sellId) {
-		return getSellsRepository().deleteSellById(sellId);
-	}
-	
-	@PUT
-	@Path("/{sellId}")
-	public SellDto updateSellById(@PathParam("sellId") int sellId, SellDto sell) {
-		return getSellsRepository().updateSellById(sellId, sell);
-	}
-	
-	@POST
-	@Path("/")
-	public SellDto createSell(SellDto sell) {
-		return getSellsRepository().createSell(sell);
-	}
+//
+//	@GET
+//	@Path("/")
+//	public List<SellsDto> getSells() {
+//		return getSellsRepository().getAllSells();
+//	}
+//	
+//	@GET
+//	@Path("/{sellId}")
+//	public SellsDto getSells(@PathParam("sellId") int sellId) {
+//		return getSellsRepository().getSellById(sellId);
+//	}
+//	
+//	@DELETE
+//	@Path("/{sellId}")
+//	public int deleteSellById(@PathParam("sellId") int sellId) {
+//		return getSellsRepository().deleteSellById(sellId);
+//	}
+//	
+//	@PUT
+//	@Path("/{sellId}")
+//	public SellsDto updateSellById(@PathParam("sellId") int sellId, SellsDto sell) {
+//		return getSellsRepository().updateSellById(sellId, sell);
+//	}
+//	
+//	@POST
+//	@Path("/")
+//	public SellsDto createSell(SellsDto sell) {
+//		return getSellsRepository().createSell(sell);
+//	}
 }

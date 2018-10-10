@@ -12,7 +12,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.moreno.wolak.project.dtos.BarDto;
 import org.moreno.wolak.project.dtos.DrinkerDto;
 import org.moreno.wolak.project.repository.drinkers.DrinkersRepository;
 

@@ -1,154 +1,42 @@
 package org.moreno.wolak.project.repository.sells;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.moreno.wolak.project.dtos.BarDto;
+import org.moreno.wolak.project.dtos.ItemDto;
+import org.moreno.wolak.project.dtos.ItemDto.ItemType;
 import org.moreno.wolak.project.dtos.OrderDto;
-import org.moreno.wolak.project.dtos.SellDto;
+import org.moreno.wolak.project.dtos.SellsRequestDto;
+import org.moreno.wolak.project.dtos.SellsResponseDto;
 import org.moreno.wolak.project.repository.ConnectionFactory;
+import org.moreno.wolak.project.repository.items.ItemsRepository;
 import org.moreno.wolak.project.repository.orders.IOrdersDao;
 
-public class SellsRepository implements IOrdersDao {
+public class SellsRepository implements ISellsDao {
 
-	private static SellsRepository repositorySingletonInstance = null;
-	
+	private static SellsRepository sellsRepositorySingletonInstance = null;
+
 
 	public static SellsRepository getSingletonInstance() {
-		if (repositorySingletonInstance == null) {
-			repositorySingletonInstance = new SellsRepository();
+		if (sellsRepositorySingletonInstance == null) {
+			sellsRepositorySingletonInstance = new SellsRepository();
 		}
-		return repositorySingletonInstance;
-		
+		return sellsRepositorySingletonInstance;
 	}
 	
-	@Override
-	public List<OrderDto> getAllOrders() {
-		List<OrderDto> orders = new ArrayList<>();
-		String queryString = "SELECT * FROM orders";
-		
-		try (Connection connection = ConnectionFactory.getConnection(); 
-			 PreparedStatement queryStatement = connection.prepareStatement(queryString)) {
-
-			ResultSet rs = queryStatement.executeQuery();
-			
-			while (rs.next()) {
-				OrderDto order = new OrderDto();
-				order.setOrderNumber(rs.getInt(1));
-				order.setBillId(rs.getInt(2));
-				order.setDrinkerId(rs.getInt(3));
-				order.setItemId(rs.getInt(4));
-				order.setQuantity(rs.getInt(5));
-				order.setOrderDate(rs.getString(6));
-				
-				orders.add(order);
-			}
-
-		} catch (SQLException e) {
-			System.out.println("FAILED: getAllOrders");
-			e.printStackTrace();
-		}
-		
-		return orders;
+	private ItemsRepository getItemsRepository() {
+		return ItemsRepository.getSingletonInstance();
 	}
 
-
-	@Override
-	public OrderDto getOrderById(int orderId) {
-		OrderDto order = new OrderDto();
-		String queryString = "SELECT * FROM orders WHERE order_number=?";
-		
-			
-		try (Connection connection = ConnectionFactory.getConnection(); 
-			 PreparedStatement queryStatement = connection.prepareStatement(queryString)) {
-			
-			queryStatement.setInt(1, orderId);
-			ResultSet rs = queryStatement.executeQuery();
-			
-			while (rs.next()) {
-				order.setOrderNumber(rs.getInt(1));
-				order.setBillId(rs.getInt(2));
-				order.setDrinkerId(rs.getInt(3));
-				order.setItemId(rs.getInt(4));
-				order.setQuantity(rs.getInt(5));
-				order.setOrderDate(rs.getString(6));
-			}
-
-		} catch (SQLException e) {
-			System.out.println("FAILED: getOrderById");
-			e.printStackTrace();
-		} 
-		
-		return order;
-	}
-
-	public OrderDto createOrder(OrderDto order) {
-		String insertString = "INSERT INTO orders (bill_id, drinker_id, item_id, quantity, order_date) VALUES(?, ?, ?, ?, now())";
-
-		try (Connection connection = ConnectionFactory.getConnection();
-			PreparedStatement insertStatement = connection.prepareStatement(insertString)) {
-
-			insertStatement.setInt(1, order.getBillId());
-			insertStatement.setInt(2, order.getDrinkerId());
-			insertStatement.setInt(3, order.getItemId());
-			insertStatement.setInt(4, order.getQuantity());
-
-			insertStatement.executeUpdate();
-		} catch (SQLException e) {
-			System.out.println("FAILED: createOrder");
-			e.printStackTrace();
-		} 
-		
-		return order;
-	}
-
-	public int deleteOrderById(int orderId) {
-		String deleteString = "DELETE FROM orders WHERE order_number=?";
-		
-		try (Connection connection = ConnectionFactory.getConnection(); 
-			 PreparedStatement deleteStatement = connection.prepareStatement(deleteString)) {
-			
-			deleteStatement.setInt(1, orderId);
-			deleteStatement.executeUpdate();
-			
-		} catch (SQLException e) {
-			System.out.println("FAILED: deleteOrderById");
-			e.printStackTrace();
-		} 
-
-		return orderId;
-	}
 	
-	public OrderDto updateOrderById(int orderId, OrderDto order) {
-		String updateString = "UPDATE orders SET bill_id=?, drinker_id=?, item_id=?, quantity=? WHERE order_number=?";
-
-		try (Connection connection = ConnectionFactory.getConnection();
-			 PreparedStatement updateStatement = connection.prepareStatement(updateString)) {
-
-			updateStatement.setInt(1, order.getBillId());
-			updateStatement.setInt(2, order.getDrinkerId());
-			updateStatement.setInt(3, order.getItemId());
-			updateStatement.setInt(4, order.getQuantity());
-			updateStatement.setInt(5, orderId);
-
-			updateStatement.executeUpdate();
-		} catch (SQLException e) {
-			System.out.println("FAILED: updateOrderById");
-			e.printStackTrace();
-		} 
-		
-		return order;
-	}
-
-	/** START BAR SELLS ITEMS **/
-
-	public List<SellDto> getAllItemsSoldByBar(int barId) {
-		List<SellDto> sells = new ArrayList<>();
+	/** START: BAR SELLS ITEMS **/
+	@Override
+	public List<SellsResponseDto> getAllItemsSoldByBar(int barId) {
+		List<SellsResponseDto> sells = new ArrayList<>();
 		String queryString = "SELECT * FROM sells WHERE bar_id=?";
 		
 		try (Connection connection = ConnectionFactory.getConnection(); 
@@ -158,9 +46,16 @@ public class SellsRepository implements IOrdersDao {
 			ResultSet rs = queryStatement.executeQuery();
 			
 			while (rs.next()) {
-				SellDto sell = new SellDto();
+				SellsResponseDto sell = new SellsResponseDto();
 				sell.setBarId(rs.getInt(1));
-				sell.setItemId(rs.getInt(2));
+
+				// get itemId
+				int itemId = rs.getInt(2);
+				// get item object
+				ItemDto item = getItemsRepository().getItemById(itemId);
+				// set item object
+				sell.setItem(item);
+
 				sell.setPrice(rs.getDouble(3));
 				
 				sells.add(sell);
@@ -174,32 +69,115 @@ public class SellsRepository implements IOrdersDao {
 		return sells;
 	}
 
-	public SellDto getItemSoldByBar(int barId, int itemId) {
-		SellDto sell = new SellDto();
-		String queryString = "SELECT * FROM sells WHERE sell_number=?";
+	@Override
+	public List<SellsResponseDto> getAllItemsOfTypeSoldByBar(int barId, ItemType type) {
+		List<SellsResponseDto> sells = new ArrayList<>();
+		String queryString = "SELECT * FROM sells WHERE bar_id=? AND item_id IN (SELECT item_id FROM items WHERE type=?)";
+		
+		try (Connection connection = ConnectionFactory.getConnection(); 
+			PreparedStatement queryStatement = connection.prepareStatement(queryString)) {
+
+			queryStatement.setInt(1, barId);
+			queryStatement.setString(2, type.toString());
+			ResultSet rs = queryStatement.executeQuery();
+			
+			while (rs.next()) {
+				SellsResponseDto sell = new SellsResponseDto();
+				sell.setBarId(rs.getInt(1));
+
+				// get itemId
+				int itemId = rs.getInt(2);
+				// get item object
+				ItemDto item = getItemsRepository().getItemById(itemId);
+				System.out.println("item id " + itemId);
+				// set item object
+				sell.setItem(item);
+
+				sell.setPrice(rs.getDouble(3));
+				
+				sells.add(sell);
+			}
+
+		} catch (SQLException e) {
+			System.out.println("FAILED: getAllItemsOfTypeSoldByBar");
+			e.printStackTrace();
+		}
+		
+		return sells;
+	}
+
+	@Override
+	public SellsResponseDto getItemSoldByBar(int barId, int itemId) {
+		SellsResponseDto sell = new SellsResponseDto();
+		String queryString = "SELECT * FROM sells WHERE bar_id=? AND item_id=?";
 		
 			
 		try (Connection connection = ConnectionFactory.getConnection(); 
 			 PreparedStatement queryStatement = connection.prepareStatement(queryString)) {
 			
-			queryStatement.setInt(1, sellId);
+			queryStatement.setInt(1, barId);
+			queryStatement.setInt(2, itemId);
 			ResultSet rs = queryStatement.executeQuery();
 			
 			while (rs.next()) {
-				sell.setSellNumber(rs.getInt(1));
-				sell.setBillId(rs.getInt(2));
-				sell.setDrinkerId(rs.getInt(3));
-				sell.setItemId(rs.getInt(4));
-				sell.setQuantity(rs.getInt(5));
-				sell.setSellDate(rs.getString(6));
+				sell.setBarId(rs.getInt(1));
+
+				// get item object
+				ItemDto item = getItemsRepository().getItemById(itemId);
+				// set item object
+				sell.setItem(item);
+
+				sell.setPrice(rs.getDouble(3));
 			}
 
 		} catch (SQLException e) {
-			System.out.println("FAILED: getSellById");
+			System.out.println("FAILED: getItemSoldByBar");
 			e.printStackTrace();
 		} 
 		
 		return sell;
+	}
+
+	@Override
+	public SellsResponseDto createItemSoldByBar(int barId, SellsRequestDto sells) {
+		String insertString = "INSERT INTO sells (bar_id, item_id, price) VALUES(?, ?, ?)";
+
+		try (Connection connection = ConnectionFactory.getConnection();
+			 PreparedStatement insertStatement = connection.prepareStatement(insertString)) {
+
+			insertStatement.setInt(1, barId);
+			insertStatement.setInt(2, sells.getItemId());
+			insertStatement.setDouble(3, sells.getPrice());
+
+			insertStatement.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println("FAILED: createBarSellsItem");
+			e.printStackTrace();
+		} 
+		
+		// upon successful creation of sells relation, return new sells record
+		return getItemSoldByBar(barId, sells.getItemId());
+	}
+
+	@Override
+	public SellsResponseDto deleteItemSoldByBar(int barId, int itemId) {
+		SellsResponseDto sells = getItemSoldByBar(barId, itemId);
+		String deleteString = "DELETE FROM sells WHERE bar_id=? AND item_id=?";
+		
+		try (Connection connection = ConnectionFactory.getConnection(); 
+			 PreparedStatement deleteStatement = connection.prepareStatement(deleteString)) {
+			
+			deleteStatement.setInt(1, barId);
+			deleteStatement.setInt(2, itemId);
+			deleteStatement.executeUpdate();
+			
+		} catch (SQLException e) {
+			System.out.println("FAILED: deleteItemById");
+			e.printStackTrace();
+		} 
+
+		// return the sells record that was deleted
+		return sells;
 	}
 
 }

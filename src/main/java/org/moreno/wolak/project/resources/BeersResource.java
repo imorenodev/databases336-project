@@ -12,23 +12,22 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.moreno.wolak.project.dtos.BarDto;
 import org.moreno.wolak.project.dtos.BeerDto;
-import org.moreno.wolak.project.dtos.DrinkerDto;
-import org.moreno.wolak.project.repository.items.beers.BeersRepository;
+import org.moreno.wolak.project.repository.items.ItemsRepository;
+
 
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/beers")
 public class BeersResource {
 
-	private BeersRepository _repository = null;
+	private ItemsRepository _repository = null;
 	
 	public BeersResource() {
-		this._repository = BeersRepository.getSingletonInstance();
+		this._repository = ItemsRepository.getSingletonInstance();
 	}
 	
-	public BeersRepository getBeersRepository() {
+	public ItemsRepository getItemsRepository() {
 		return this._repository;
 	}
 
@@ -36,30 +35,30 @@ public class BeersResource {
 	@GET
 	@Path("/")
 	public List<BeerDto> getBeers() {
-		return getBeersRepository().getAllBeers();
+		return getItemsRepository().getAllBeers();
 	}
 	
 	@GET
 	@Path("/{beerId}")
 	public BeerDto getBeers(@PathParam("beerId") int beerId) {
-		return getBeersRepository().getBeerById(beerId);
+		return getItemsRepository().getBeerById(beerId);
 	}
 	
 	@DELETE
 	@Path("/{beerId}")
 	public int deleteBeerById(@PathParam("beerId") int beerId) {
-		return getBeersRepository().deleteBeerById(beerId);
+		return getItemsRepository().deleteBeerById(beerId);
 	}
 	
 	@PUT
 	@Path("/{beerId}")
 	public BeerDto updateBeerById(@PathParam("beerId") int beerId, BeerDto beer) {
-		return getBeersRepository().updateBeerById(beerId, beer);
+		return getItemsRepository().updateBeerById(beerId, beer);
 	}
 	
 	@POST
 	@Path("/")
 	public BeerDto createBeer(BeerDto beer) {
-		return getBeersRepository().createBeer(beer);
+		return getItemsRepository().createBeer(beer);
 	}
 }

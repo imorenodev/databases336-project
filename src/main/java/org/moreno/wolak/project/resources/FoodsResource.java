@@ -12,22 +12,22 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.moreno.wolak.project.dtos.BeerDto;
 import org.moreno.wolak.project.dtos.FoodDto;
-import org.moreno.wolak.project.repository.items.foods.FoodsRepository;
+import org.moreno.wolak.project.repository.items.ItemsRepository;
+
 
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/foods")
 public class FoodsResource {
 
-	private FoodsRepository _repository = null;
+	private ItemsRepository _repository = null;
 	
 	public FoodsResource() {
-		this._repository = FoodsRepository.getSingletonInstance();
+		this._repository = ItemsRepository.getSingletonInstance();
 	}
 	
-	public FoodsRepository getFoodsRepository() {
+	public ItemsRepository getItemsRepository() {
 		return this._repository;
 	}
 
@@ -35,30 +35,30 @@ public class FoodsResource {
 	@GET
 	@Path("/")
 	public List<FoodDto> getFoods() {
-		return getFoodsRepository().getAllFoods();
+		return getItemsRepository().getAllFoods();
 	}
 	
 	@GET
 	@Path("/{foodId}")
 	public FoodDto getFoods(@PathParam("foodId") int foodId) {
-		return getFoodsRepository().getFoodById(foodId);
+		return getItemsRepository().getFoodById(foodId);
 	}
 	
 	@DELETE
 	@Path("/{foodId}")
 	public int deleteFoodById(@PathParam("foodId") int foodId) {
-		return getFoodsRepository().deleteFoodById(foodId);
+		return getItemsRepository().deleteFoodById(foodId);
 	}
 	
 	@PUT
 	@Path("/{foodId}")
 	public FoodDto updateFoodById(@PathParam("foodId") int foodId, FoodDto food) {
-		return getFoodsRepository().updateFoodById(foodId, food);
+		return getItemsRepository().updateFoodById(foodId, food);
 	}
 	
 	@POST
 	@Path("/")
 	public FoodDto createFood(FoodDto food) {
-		return getFoodsRepository().createFood(food);
+		return getItemsRepository().createFood(food);
 	}
 }

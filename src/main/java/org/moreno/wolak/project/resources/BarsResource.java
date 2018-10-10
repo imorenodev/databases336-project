@@ -13,8 +13,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.moreno.wolak.project.dtos.BarDto;
-import org.moreno.wolak.project.dtos.ItemDto;
-import org.moreno.wolak.project.dtos.SellDto;
+import org.moreno.wolak.project.dtos.ItemDto.ItemType;
+import org.moreno.wolak.project.dtos.SellsRequestDto;
+import org.moreno.wolak.project.dtos.SellsResponseDto;
 import org.moreno.wolak.project.repository.bars.BarsRepository;
 import org.moreno.wolak.project.repository.sells.SellsRepository;
 
@@ -46,22 +47,23 @@ public class BarsResource {
 		return getBarsRepository().getAllBars();
 	}
 	
+	@POST
+	@Path("/")
+	public BarDto createBar(BarDto bar) {
+		return getBarsRepository().createBar(bar);
+	}
+
+
 	@GET
 	@Path("/{barId}")
-	public BarDto getBars(@PathParam("barId") int barId) {
+	public BarDto getBarById(@PathParam("barId") int barId) {
 		return getBarsRepository().getBarById(barId);
-	}
-	
-	@GET
-	@Path("/{barId}/sells")
-	public List<SellDto> getAllItemsSoldByBar(@PathParam("barId") int barId) {
-		return getSellsRepository().getAllItemsSoldByBar(barId);
-	}
-	
-	@GET
-	@Path("/{barId}/sells/{itemId}")
-	public SellDto getItemSoldByBar(@PathParam("barId") int barId, @PathParam("itemId") int itemId) {
-		return getSellsRepository().getItemSoldByBar(barId, itemId);
+	}	
+
+	@PUT
+	@Path("/{barId}")
+	public BarDto updateBarById(@PathParam("barId") int barId, BarDto bar) {
+		return getBarsRepository().updateBarById(barId, bar);
 	}
 	
 	@DELETE
@@ -69,16 +71,49 @@ public class BarsResource {
 	public int deleteBarById(@PathParam("barId") int barId) {
 		return getBarsRepository().deleteBarById(barId);
 	}
+
 	
-	@PUT
-	@Path("/{barId}")
-	public BarDto updateBarById(@PathParam("barId") int barId, BarDto bar) {
-		return getBarsRepository().updateBarById(barId, bar);
+	@GET
+	@Path("/{barId}/sells")
+	public List<SellsResponseDto> getAllItemsSoldByBar(@PathParam("barId") int barId) {
+		return getSellsRepository().getAllItemsSoldByBar(barId);
 	}
 	
 	@POST
-	@Path("/")
-	public BarDto createBar(BarDto bar) {
-		return getBarsRepository().createBar(bar);
+	@Path("/{barId}/sells")
+	public SellsResponseDto createBarSellsItem(@PathParam("barId") int barId, SellsRequestDto sells) {
+		return getSellsRepository().createItemSoldByBar(barId, sells);
 	}
+	
+	@GET
+	@Path("/{barId}/sells/beers")
+	public List<SellsResponseDto> getAllBeersSoldByBar(@PathParam("barId") int barId) {
+		return getSellsRepository().getAllItemsOfTypeSoldByBar(barId, ItemType.beer);
+	}
+
+	@GET
+	@Path("/{barId}/sells/foods")
+	public List<SellsResponseDto> getAllFoodsSoldByBar(@PathParam("barId") int barId) {
+		return getSellsRepository().getAllItemsOfTypeSoldByBar(barId, ItemType.food);
+	}
+
+	@GET
+	@Path("/{barId}/sells/softdrinks")
+	public List<SellsResponseDto> getAllSoftDrinksSoldByBar(@PathParam("barId") int barId) {
+		return getSellsRepository().getAllItemsOfTypeSoldByBar(barId, ItemType.soft_drink);
+	}
+	
+	@GET
+	@Path("/{barId}/sells/{itemId}")
+	public SellsResponseDto getItemSoldByBar(@PathParam("barId") int barId, @PathParam("itemId") int itemId) {
+		return getSellsRepository().getItemSoldByBar(barId, itemId);
+	}
+	
+
+	@DELETE
+	@Path("/{barId}/sells/{itemId}")
+	public SellsResponseDto deleteItemSoldByBar(@PathParam("barId") int barId, @PathParam("itemId") int itemId) {
+		return getSellsRepository().deleteItemSoldByBar(barId, itemId);
+	}
+	
 }

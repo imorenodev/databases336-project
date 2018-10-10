@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.moreno.wolak.project.dtos.DayDto;
 import org.moreno.wolak.project.repository.ConnectionFactory;
-import org.moreno.wolak.project.repository.days.IDaysDao;
 
 public class DaysRepository implements IDaysDao {
 

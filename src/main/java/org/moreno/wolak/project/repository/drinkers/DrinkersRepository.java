@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.moreno.wolak.project.dtos.BarDto;
 import org.moreno.wolak.project.dtos.DrinkerDto;
 import org.moreno.wolak.project.repository.ConnectionFactory;
 
