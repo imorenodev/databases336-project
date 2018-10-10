@@ -13,7 +13,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.moreno.wolak.project.dtos.BarDto;
+import org.moreno.wolak.project.dtos.ItemDto;
+import org.moreno.wolak.project.dtos.SellDto;
 import org.moreno.wolak.project.repository.bars.BarsRepository;
+import org.moreno.wolak.project.repository.sells.SellsRepository;
 
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -21,13 +24,19 @@ import org.moreno.wolak.project.repository.bars.BarsRepository;
 public class BarsResource {
 	
 	private BarsRepository _repository = null;
+	private SellsRepository _sellsRepository = null;
 	
 	public BarsResource() {
 		this._repository = BarsRepository.getSingletonInstance();
+		this._sellsRepository = SellsRepository.getSingletonInstance();
 	}
 	
 	public BarsRepository getBarsRepository() {
 		return this._repository;
+	}
+
+	public SellsRepository getSellsRepository() {
+		return this._sellsRepository;
 	}
 
 
@@ -41,6 +50,18 @@ public class BarsResource {
 	@Path("/{barId}")
 	public BarDto getBars(@PathParam("barId") int barId) {
 		return getBarsRepository().getBarById(barId);
+	}
+	
+	@GET
+	@Path("/{barId}/sells")
+	public List<SellDto> getAllItemsSoldByBar(@PathParam("barId") int barId) {
+		return getSellsRepository().getAllItemsSoldByBar(barId);
+	}
+	
+	@GET
+	@Path("/{barId}/sells/{itemId}")
+	public SellDto getItemSoldByBar(@PathParam("barId") int barId, @PathParam("itemId") int itemId) {
+		return getSellsRepository().getItemSoldByBar(barId, itemId);
 	}
 	
 	@DELETE

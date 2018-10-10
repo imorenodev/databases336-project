@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class ConnectionFactory {
 
-	private static final String DB_URL = "jdbc:mysql://localhost:3306/testaurant_db?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+	private static final String DB_URL = "jdbc:mysql://localhost:3306/bar_app_db?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
 	private static final String USERNAME = "root";
 	private static final String PASSWORD = "1Bladerz1";
 	private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
