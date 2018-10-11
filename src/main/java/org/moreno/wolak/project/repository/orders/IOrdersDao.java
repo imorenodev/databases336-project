@@ -10,4 +10,6 @@ public interface IOrdersDao {
 	int deleteOrderById(int orderId);
 	List<OrderDto> getAllOrders();
 	OrderDto createOrder(OrderDto order);
+	List<OrderDto> getOrdersByBillId(int billId);
+	List<OrderDto> getOrdersByDrinkerId(int drinkerId);
 }

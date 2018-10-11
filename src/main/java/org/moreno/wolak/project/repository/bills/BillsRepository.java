@@ -1,7 +1,6 @@
 package org.moreno.wolak.project.repository.bills;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,7 +9,6 @@ import java.util.List;
 
 import org.moreno.wolak.project.dtos.BillDto;
 import org.moreno.wolak.project.repository.ConnectionFactory;
-import org.moreno.wolak.project.repository.bills.IBillsDao;
 
 public class BillsRepository implements IBillsDao {
 

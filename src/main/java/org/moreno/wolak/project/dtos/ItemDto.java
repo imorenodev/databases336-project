@@ -5,7 +5,7 @@ import javax.json.bind.annotation.JsonbPropertyOrder;
 @JsonbPropertyOrder({
 	"name", "itemId", "manufacturer", "calories", "type"
 })
-public abstract class ItemDto {
+public class ItemDto {
 
 	public enum ItemType {
 		beer,

@@ -12,23 +12,22 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.moreno.wolak.project.dtos.BeerDto;
-import org.moreno.wolak.project.dtos.FoodDto;
 import org.moreno.wolak.project.dtos.SoftDrinkDto;
-import org.moreno.wolak.project.repository.items.softdrinks.SoftDrinksRepository;
+import org.moreno.wolak.project.repository.items.ItemsRepository;
+
 
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Path("/softdrinks")
 public class SoftDrinksResource {
 
-	private SoftDrinksRepository _repository = null;
+	private ItemsRepository _repository = null;
 	
 	public SoftDrinksResource() {
-		this._repository = SoftDrinksRepository.getSingletonInstance();
+		this._repository = ItemsRepository.getSingletonInstance();
 	}
 	
-	public SoftDrinksRepository getSoftDrinksRepository() {
+	public ItemsRepository getItemsRepository() {
 		return this._repository;
 	}
 
@@ -36,30 +35,30 @@ public class SoftDrinksResource {
 	@GET
 	@Path("/")
 	public List<SoftDrinkDto> getSoftDrinks() {
-		return getSoftDrinksRepository().getAllSoftDrinks();
+		return getItemsRepository().getAllSoftDrinks();
 	}
 	
 	@GET
 	@Path("/{softDrinkId}")
 	public SoftDrinkDto getSoftDrinks(@PathParam("softDrinkId") int softDrinkId) {
-		return getSoftDrinksRepository().getSoftDrinkById(softDrinkId);
+		return getItemsRepository().getSoftDrinkById(softDrinkId);
 	}
 	
 	@DELETE
 	@Path("/{softDrinkId}")
 	public int deleteSoftDrinkById(@PathParam("softDrinkId") int softDrinkId) {
-		return getSoftDrinksRepository().deleteSoftDrinkById(softDrinkId);
+		return getItemsRepository().deleteSoftDrinkById(softDrinkId);
 	}
 	
 	@PUT
 	@Path("/{softDrinkId}")
 	public SoftDrinkDto updateSoftDrinkById(@PathParam("softDrinkId") int softDrinkId, SoftDrinkDto softDrink) {
-		return getSoftDrinksRepository().updateSoftDrinkById(softDrinkId, softDrink);
+		return getItemsRepository().updateSoftDrinkById(softDrinkId, softDrink);
 	}
 	
 	@POST
 	@Path("/")
 	public SoftDrinkDto createSoftDrink(SoftDrinkDto softDrink) {
-		return getSoftDrinksRepository().createSoftDrink(softDrink);
+		return getItemsRepository().createSoftDrink(softDrink);
 	}
 }
