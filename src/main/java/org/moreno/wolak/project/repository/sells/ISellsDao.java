@@ -2,9 +2,9 @@ package org.moreno.wolak.project.repository.sells;
 
 import java.util.List;
 
-import org.moreno.wolak.project.dtos.SellsResponseDto;
 import org.moreno.wolak.project.dtos.ItemDto.ItemType;
 import org.moreno.wolak.project.dtos.SellsRequestDto;
+import org.moreno.wolak.project.dtos.SellsResponseDto;
 
 public interface ISellsDao {
 	
@@ -13,5 +13,6 @@ public interface ISellsDao {
 	SellsResponseDto getItemSoldByBar(int barId, int itemId);
 	SellsResponseDto deleteItemSoldByBar(int barId, int itemId);
 	SellsResponseDto createItemSoldByBar(int barId, SellsRequestDto sells);
+	SellsResponseDto updateItemSoldByBar(int barId, int itemId, SellsRequestDto sells);
 	
 }

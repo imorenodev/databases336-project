@@ -13,7 +13,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.moreno.wolak.project.dtos.BillDto;
+import org.moreno.wolak.project.dtos.OrderDto;
 import org.moreno.wolak.project.repository.bills.BillsRepository;
+import org.moreno.wolak.project.repository.orders.OrdersRepository;
 
 
 @Produces(MediaType.APPLICATION_JSON)
@@ -29,6 +31,10 @@ public class BillsResource {
 	
 	public BillsRepository getBillsRepository() {
 		return this._repository;
+	}
+	
+	public OrdersRepository getOrdersRepository() {
+		return OrdersRepository.getSingletonInstance();
 	}
 
 
@@ -60,5 +66,11 @@ public class BillsResource {
 	@Path("/")
 	public BillDto createBill(BillDto bill) {
 		return getBillsRepository().createBill(bill);
+	}
+	
+	@GET
+	@Path("/{billId}/orders")
+	public List<OrderDto> getOrdersByBillId(@PathParam("billId") int billId) {
+		return getOrdersRepository().getOrdersByBillId(billId);
 	}
 }

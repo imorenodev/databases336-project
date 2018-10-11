@@ -1,12 +1,19 @@
 package org.moreno.wolak.project.dtos;
 
 
-public class PayDto {
+public class PaysRequestDto {
 
 	private int billId;
 	private int drinkerId;
+	private double totalPaid;
 	
 	
+	public double getTotalPaid() {
+		return totalPaid;
+	}
+	public void setTotalPaid(double totalPaid) {
+		this.totalPaid = totalPaid;
+	}
 	public int getBillId() {
 		return billId;
 	}

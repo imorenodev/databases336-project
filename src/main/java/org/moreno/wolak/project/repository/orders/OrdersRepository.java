@@ -83,6 +83,7 @@ public class OrdersRepository implements IOrdersDao {
 		return order;
 	}
 
+	@Override
 	public OrderDto createOrder(OrderDto order) {
 		String insertString = "INSERT INTO orders (bill_id, drinker_id, item_id, quantity, order_date) VALUES(?, ?, ?, ?, now())";
 
@@ -103,6 +104,7 @@ public class OrdersRepository implements IOrdersDao {
 		return order;
 	}
 
+	@Override
 	public int deleteOrderById(int orderId) {
 		String deleteString = "DELETE FROM orders WHERE order_number=?";
 		
@@ -120,11 +122,12 @@ public class OrdersRepository implements IOrdersDao {
 		return orderId;
 	}
 	
+	@Override
 	public OrderDto updateOrderById(int orderId, OrderDto order) {
 		String updateString = "UPDATE orders SET bill_id=?, drinker_id=?, item_id=?, quantity=? WHERE order_number=?";
 
 		try (Connection connection = ConnectionFactory.getConnection();
-			 PreparedStatement updateStatement = connection.prepareStatement(updateString)) {
+			PreparedStatement updateStatement = connection.prepareStatement(updateString)) {
 
 			updateStatement.setInt(1, order.getBillId());
 			updateStatement.setInt(2, order.getDrinkerId());
@@ -138,7 +141,69 @@ public class OrdersRepository implements IOrdersDao {
 			e.printStackTrace();
 		} 
 		
-		return order;
+		return getOrderById(orderId);
+	}
+
+	@Override
+	public List<OrderDto> getOrdersByBillId(int billId) {
+		List<OrderDto> orders = new ArrayList<>();
+		String queryString = "SELECT * FROM orders WHERE bill_id=?";
+		
+		try (Connection connection = ConnectionFactory.getConnection(); 
+			 PreparedStatement queryStatement = connection.prepareStatement(queryString)) {
+
+			queryStatement.setInt(1, billId);
+			ResultSet rs = queryStatement.executeQuery();
+			
+			while (rs.next()) {
+				OrderDto order = new OrderDto();
+				order.setOrderNumber(rs.getInt(1));
+				order.setBillId(rs.getInt(2));
+				order.setDrinkerId(rs.getInt(3));
+				order.setItemId(rs.getInt(4));
+				order.setQuantity(rs.getInt(5));
+				order.setOrderDate(rs.getString(6));
+				
+				orders.add(order);
+			}
+
+		} catch (SQLException e) {
+			System.out.println("FAILED: getOrdersByBillId");
+			e.printStackTrace();
+		}
+		
+		return orders;
+	}
+
+	@Override
+	public List<OrderDto> getOrdersByDrinkerId(int drinkerId) {
+		List<OrderDto> orders = new ArrayList<>();
+		String queryString = "SELECT * FROM orders WHERE drinker_id=?";
+		
+		try (Connection connection = ConnectionFactory.getConnection(); 
+			 PreparedStatement queryStatement = connection.prepareStatement(queryString)) {
+
+			queryStatement.setInt(1, drinkerId);
+			ResultSet rs = queryStatement.executeQuery();
+			
+			while (rs.next()) {
+				OrderDto order = new OrderDto();
+				order.setOrderNumber(rs.getInt(1));
+				order.setBillId(rs.getInt(2));
+				order.setDrinkerId(rs.getInt(3));
+				order.setItemId(rs.getInt(4));
+				order.setQuantity(rs.getInt(5));
+				order.setOrderDate(rs.getString(6));
+				
+				orders.add(order);
+			}
+
+		} catch (SQLException e) {
+			System.out.println("FAILED: getOrdersByDrinkerId");
+			e.printStackTrace();
+		}
+		
+		return orders;
 	}
 
 }

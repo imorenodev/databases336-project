@@ -7,14 +7,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.moreno.wolak.project.dtos.BarDto;
 import org.moreno.wolak.project.dtos.ItemDto;
 import org.moreno.wolak.project.dtos.ItemDto.ItemType;
-import org.moreno.wolak.project.dtos.OrderDto;
 import org.moreno.wolak.project.dtos.SellsRequestDto;
 import org.moreno.wolak.project.dtos.SellsResponseDto;
 import org.moreno.wolak.project.repository.ConnectionFactory;
+import org.moreno.wolak.project.repository.bars.BarsRepository;
 import org.moreno.wolak.project.repository.items.ItemsRepository;
-import org.moreno.wolak.project.repository.orders.IOrdersDao;
 
 public class SellsRepository implements ISellsDao {
 
@@ -31,7 +31,39 @@ public class SellsRepository implements ISellsDao {
 	private ItemsRepository getItemsRepository() {
 		return ItemsRepository.getSingletonInstance();
 	}
+	
+	private BarsRepository getBarsRepository() {
+		return BarsRepository.getSingletonInstance();
+	}
 
+
+	public List<SellsResponseDto> getAllSells() {
+		List<SellsResponseDto> sellsList = new ArrayList<>();
+		
+		String queryString = "SELECT * FROM sells";
+		
+		try (Connection connection = ConnectionFactory.getConnection(); 
+			 PreparedStatement queryStatement = connection.prepareStatement(queryString)) {
+
+			ResultSet rs = queryStatement.executeQuery();
+			
+			while (rs.next()) {
+				SellsResponseDto sells = new SellsResponseDto();
+
+				sells.setBarId(rs.getInt(1));
+				sells.setItem(getItemsRepository().getItemById(rs.getInt(2)));
+				sells.setPrice(rs.getDouble(3));
+				
+				sellsList.add(sells);
+			}
+
+		} catch (SQLException e) {
+			System.out.println("FAILED: getAllSells");
+			e.printStackTrace();
+		}
+
+		return sellsList;
+	}
 	
 	/** START: BAR SELLS ITEMS **/
 	@Override
@@ -158,6 +190,27 @@ public class SellsRepository implements ISellsDao {
 		// upon successful creation of sells relation, return new sells record
 		return getItemSoldByBar(barId, sells.getItemId());
 	}
+	
+	@Override
+	public SellsResponseDto updateItemSoldByBar(int barId, int itemId, SellsRequestDto sells) {
+		String updateString = "UPDATE items SET price=? WHERE bar_id=? AND item_id=?";
+
+		try (Connection connection = ConnectionFactory.getConnection();
+			PreparedStatement updateStatement = connection.prepareStatement(updateString)) {
+
+			updateStatement.setDouble(1, sells.getPrice());
+			updateStatement.setInt(2, barId);
+			updateStatement.setInt(3, itemId);
+
+			updateStatement.executeUpdate();
+		} catch (SQLException e) {
+			System.out.println("FAILED: updateItemById");
+			e.printStackTrace();
+		} 
+		
+		// upon successful update of item's price, return updated sells record
+		return getItemSoldByBar(barId, itemId);
+	}
 
 	@Override
 	public SellsResponseDto deleteItemSoldByBar(int barId, int itemId) {
@@ -178,6 +231,52 @@ public class SellsRepository implements ISellsDao {
 
 		// return the sells record that was deleted
 		return sells;
+	}
+
+	public List<BarDto> getAllBarsWhoSellItemType(ItemType itemType) {
+		List<BarDto> bars = new ArrayList<>();
+		String queryString = "SELECT bar_id FROM sells WHERE item_id IN (SELECT item_id FROM items WHERE type=?)";
+		
+		try (Connection connection = ConnectionFactory.getConnection(); 
+			PreparedStatement queryStatement = connection.prepareStatement(queryString)) {
+
+			queryStatement.setString(1, itemType.toString());
+			ResultSet rs = queryStatement.executeQuery();
+			
+			while (rs.next()) {
+				BarDto bar = getBarsRepository().getBarById(rs.getInt(1));
+				bars.add(bar);
+			}
+
+		} catch (SQLException e) {
+			System.out.println("FAILED: getAllBarsWhoSellItemType");
+			e.printStackTrace();
+		}
+		
+		return bars;
+	}
+
+	public List<BarDto> getAllBarsWhoSellItemById(int itemId) {
+		List<BarDto> bars = new ArrayList<>();
+		String queryString = "SELECT bar_id FROM sells WHERE item_id=?";
+		
+		try (Connection connection = ConnectionFactory.getConnection(); 
+			PreparedStatement queryStatement = connection.prepareStatement(queryString)) {
+
+			queryStatement.setInt(1, itemId);
+			ResultSet rs = queryStatement.executeQuery();
+			
+			while (rs.next()) {
+				BarDto bar = getBarsRepository().getBarById(rs.getInt(1));
+				bars.add(bar);
+			}
+
+		} catch (SQLException e) {
+			System.out.println("FAILED: getAllBarsWhoSellItemById");
+			e.printStackTrace();
+		}
+		
+		return bars;
 	}
 
 }
